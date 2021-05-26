@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 import ColorBox from '../components/ColorBox';
 
 const ColorPalette = ({ route }) => {
@@ -15,11 +15,5 @@ const ColorPalette = ({ route }) => {
     />
   );
 };
-
-const styles = StyleSheet.create({
-  heading: {
-    fontSize: 18,
-  },
-});
 
 export default ColorPalette;
