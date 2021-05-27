@@ -1,11 +1,19 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { StyleSheet, FlatList } from 'react-native';
+import {
+  StyleSheet,
+  FlatList,
+  RefreshControl,
+  TouchableOpacity,
+  Text,
+} from 'react-native';
 import PalettePreview from '../components/PalettePreview';
 
 const URL = 'https://color-palette-api.kadikraman.now.sh/palettes';
 
-const Home = ({ navigation }) => {
+const Home = ({ navigation, route }) => {
+  const newPalette = route.params ? route.params.newPalette : null;
   const [palettes, setPalettes] = useState([]);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   const handleFetchPalettes = useCallback(async () => {
     const response = await fetch(URL);
@@ -15,9 +23,23 @@ const Home = ({ navigation }) => {
     }
   }, []);
 
+  const handleRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await handleFetchPalettes();
+    setTimeout(() => {
+      setIsRefreshing(false);
+    }, 1000);
+  }, []);
+
   useEffect(() => {
     handleFetchPalettes();
   }, []);
+
+  useEffect(() => {
+    if (newPalette) {
+      setPalettes((current) => [newPalette, ...current]);
+    }
+  }, [newPalette]);
 
   return (
     <FlatList
@@ -30,6 +52,14 @@ const Home = ({ navigation }) => {
           palette={item}
         />
       )}
+      refreshControl={
+        <RefreshControl refreshing={isRefreshing} onRefresh={handleRefresh} />
+      }
+      ListHeaderComponent={
+        <TouchableOpacity onPress={() => navigation.navigate('AddNewPalette')}>
+          <Text>Launch Modal</Text>
+        </TouchableOpacity>
+      }
     />
   );
 };
